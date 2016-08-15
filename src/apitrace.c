@@ -5,7 +5,7 @@ pinstr new_instr( char* instrName)
 	pinstr hNode = ( pinstr) malloc( sizeof( instr));
 
 	///<*hNode = { .name = instrName, .count = 1, .plink = NULL, .last = NULL};
-	hNode->name = instrName; hNode->count = 1; hNode->calls = NULL; hNode->last = NULL;
+	hNode->name = instrName; hNode->count = 1; hNode->calls = NULL; hNode->last = NULL; hNode->next = NULL;
 
 	return hNode;
 }
@@ -32,6 +32,19 @@ pinstr append_instr( pinstr hNode, long call)
 	return hNode;
 }
 
+ptracef new_tracef( int fnum, char** fname)
+{
+	ptracef tfile = (ptracef) malloc( sizeof( tracef) * fnum);
+
+	for( register int i = 0; i < fnum; ++i)
+	{
+		tfile[i].name = fname[i];
+		tfile[i].p = NULL;
+	}
+
+	return tfile;
+}
+
 
 /*blob_calls_stat
 {
@@ -53,3 +66,32 @@ void apitrace_dump( char *tracef)
 		waitpid( cpid, &status, 0);
 		dprintf("Child complete\n");
 }
+
+/*
+void apitrace_dump( char *tracef)
+{
+	pid_t cpid = fork();
+	int status;
+
+	fd pi[2];
+	pipe( pi);
+
+	if( cpid < 0){
+		eprintf( "fork error");
+		exit( EXIT_FAILURE);
+	}
+	else if ( cpid == 0){///< Child proc
+		close( pi[ in]);
+		dup2( pi[out], STDOUT_FILENO);
+
+		execlp("apitrace", "apitrace", "dump", tracef);///< we can use execl but we should use the absolute path
+		exit( 0);
+	}
+	else{///< Parent proc
+		close( pi[ out]);
+
+		waitpid( cpid, &status, 0);
+		dprintf("Child complete\n");
+	}
+}
+*/

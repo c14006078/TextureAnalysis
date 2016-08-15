@@ -6,11 +6,13 @@
 #include <sys/wait.h>
 
 #include "debug.h"
+#include "ipc.h"
 
 typedef unsigned long long lint;///< avoid the 
 
 typedef struct clink *plink;
 typedef struct instr *pinstr;
+typedef struct tracef *ptracef;
 
 typedef struct clink{
 	lint call; ///< calls maybe overflow
@@ -22,8 +24,13 @@ typedef struct instr{
 	unsigned int count;
 	plink calls;
 	plink last;
+	pinstr next;
 }instr;
 
+typedef struct tracef{
+	char* name;
+	pinstr p;
+} tracef;
 
 pinstr new_instr( char* instrName);
 

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdbool.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -6,7 +7,7 @@
 #include "debug.h"
 
 
-typedef enum { False, True} Bool;
+//typedef enum { False, True} Bool; ///< we use C99 <stdbool.h>
 
 /**
  *	Check file exist or not.
@@ -19,7 +20,7 @@ typedef enum { False, True} Bool;
  *		man 2 access
  *		follow http://stackoverflow.com/questions/230062/whats-the-best-way-to-check-if-a-file-exists-in-c-cross-platform
  */
-Bool fexist( char* fname);
+bool fexist( char* fname);
 
 
-Bool mkd( char* dname, mode_t mode);
+bool mkd( char* dname, mode_t mode);

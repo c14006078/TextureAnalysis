@@ -56,55 +56,44 @@ int main( int argc, char **argv)
 			errUsage();
 	}
 	
-	const int fnum = index;
-
 	//ptracef tfiles = new_tracef( fnum, fnames);
 
-	pid_t cpid = fork();
 	time_t start, end;
 
-	int status;
+	int status, fnum = index;
 
-	start = get_time();
-
-	if( cpid < 0){
-		eprintf("fork error");
-		exit( EXIT_FAILURE);
+	for( int i = 0; i < fnum; i++)
+	{
+		char cmd[100] = "apitrace dump ";
+		strcat( cmd, fnames[i]);
+		strcat( cmd, " |grep blob");
+		dprintf("cmd = %s\n", cmd);
+		system(cmd);
 	}
-	else if( cpid == 0){
+
+	/*for( int i = 0; i < fnum; i++)
+	{
+		pid_t cpid = fork();
+		start = get_time();
 		
-		pid_t *pids = ( pid_t*) malloc( sizeof( pid_t) * fnum);
-
-		for( int i = 0; i < fnum; i++)
-		{
-			dprintf("for i = %d, pid = %d\n", i, pids[i]);
-			pids[i] = fork();
-
-			if( pids[i] < 0){
-				eprintf("fork error");
-				exit( EXIT_FAILURE);
-			}
-			else if( pids[i] == 0){
-				dprintf("prepare to exec_dump_file");
-				char ct[10];
-				sprintf( ct, "test%d", i);
-				dprintf("ct = %s", ct);
-				exec_dump_file( fnames[i], ct);
-				exit( 0);
-			}
+		if( cpid < 0){
+			eprintf("fork error");
+			exit( EXIT_FAILURE);
 		}
-		for( int i = 0; i < fnum; i++)
-			waitpid( pids[i], &status, 0);
-		
-		end = get_time();
-		dprintf("All work is complete. It take %lf sec\n", diff_time( start, end));
-		exit( 0);
-	}
-	else
-		waitpid( cpid, &status , 0);
-	end = get_time();
-	dprintf("All work is complete. It take %lf sec\n", diff_time( start, end));
-
+		else if( cpid == 0){
+	
+			//execl("/bin/sh", "sh", "apitrace dump ../f.trace/abgr.trace | grep blob", NULL);
+			system( "apitrace dump " fnames[i] " | grep blob");
+			end = get_time();
+			dprintf("All work is complete. It take %lf sec\n", diff_time( start, end));
+			exit( 0);
+		}
+		else{
+			waitpid( cpid, &status , 0);
+			end = get_time();
+			dprintf("All work is complete. It take %lf sec\n", diff_time( start, end));
+		}
+	}*/
 	//statistic( );
 
 	free( fnames);

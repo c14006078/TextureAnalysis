@@ -1,7 +1,8 @@
 EXEC = \
 	main \
 	test-file \
-	test-dump-stdout
+	test-dump-stdout \
+	test-dump-file
 
 OBJS = \
 	file.o \

@@ -46,10 +46,17 @@ ptracef new_tracef( int fnum, char** fname)
 }
 
 
-/*blob_calls_stat
+/*void blob_calls_stat
+{
+
+}
+
+void trace_analysis()
 {
 	
-}*/
+}
+
+fill_instr();*/
 
 void apitrace_dump( char *tracef)
 {
@@ -67,8 +74,11 @@ void apitrace_dump( char *tracef)
 		dprintf("Child complete\n");
 }
 
-/*
-void apitrace_dump( char *tracef)
+
+
+
+
+void apitrace_dump_pipe( char *tracef)
 {
 	pid_t cpid = fork();
 	int status;
@@ -94,4 +104,29 @@ void apitrace_dump( char *tracef)
 		dprintf("Child complete\n");
 	}
 }
-*/
+
+void apitrace_dump_file( char *tracef, char* outfile)
+{
+	pid_t cpid = fork();
+	int status;
+
+	if( cpid < 0){
+		eprintf( "fork error");
+		exit( EXIT_FAILURE);
+	}
+	else if ( cpid == 0){///< Child proc
+		
+		fd fout = creat( outfile, 0644); ///< == open( "test", O_WRONLY | O_CREAT | O_TRUNC );
+		if( fout == -1){ perror("create"); exit( 0);}
+		dup2( fout, STDOUT_FILENO);
+		close( fout);
+
+		execlp("apitrace", "apitrace", "dump", tracef);///< we can use execl but we should use the absolute path
+		exit( 0);
+	}
+	else{///< Parent proc
+
+		waitpid( cpid, &status, 0);
+		dprintf("Child complete\n");
+	}
+}

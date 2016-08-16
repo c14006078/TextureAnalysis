@@ -4,6 +4,8 @@
 #include <unistd.h>
 #include <sys/types.h> ///< define "pid_t"
 #include <sys/wait.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #include "debug.h"
 #include "ipc.h"
@@ -37,3 +39,7 @@ pinstr new_instr( char* instrName);
 pinstr append_instr( pinstr hNode, long call);
 
 void apitrace_dump( char *tracef);
+
+void apitrace_dump_pipe( char *tracef);
+
+void apitrace_dump_file( char *tracef, char* outfile);

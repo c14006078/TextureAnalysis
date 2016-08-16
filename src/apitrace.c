@@ -138,5 +138,5 @@ void exec_dump_file( char *tracef, char* outfile)
 	if( fout == -1){ perror("create"); exit( 0);}
 	dup2( fout, STDOUT_FILENO);
 	close( fout);
-	execlp("apitrace", "apitrace", "dump", tracef);///< we can use execl but we should use the absolute path
+	execlp("apitrace", "apitrace", "dump", tracef, NULL);///< we can use execl but we should use the absolute path
 }

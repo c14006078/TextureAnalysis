@@ -96,8 +96,8 @@ int main( int argc, char **argv)
 		for( int i = 0; i < fnum; i++)
 			waitpid( pids[i], &status, 0);
 		
-		end = get_time();
-		dprintf("All work is complete. It take %lf sec\n", diff_time( start, end));
+		//end = get_time();
+		//dprintf("All work is complete. It take %lf sec\n", diff_time( start, end));
 		exit( 0);
 	}
 	else

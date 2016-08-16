@@ -38,8 +38,12 @@ pinstr new_instr( char* instrName);
 
 pinstr append_instr( pinstr hNode, long call);
 
+ptracef new_tracef( int fnum, char** fname);
+
 void apitrace_dump( char *tracef);
 
 void apitrace_dump_pipe( char *tracef);
 
 void apitrace_dump_file( char *tracef, char* outfile);
+
+void exec_dump_file( char *tracef, char* outfile);

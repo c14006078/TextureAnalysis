@@ -130,3 +130,13 @@ void apitrace_dump_file( char *tracef, char* outfile)
 		dprintf("Child complete\n");
 	}
 }
+
+void exec_dump_file( char *tracef, char* outfile)
+{
+	fd fout = creat( outfile, 0644); ///< == open( "test", O_WRONLY | O_CREAT | O_TRUNC );
+	//fd fout = open( outfile, O_WRONLY | O_CREAT | O_TRUNC | O_APPEND );
+	if( fout == -1){ perror("create"); exit( 0);}
+	dup2( fout, STDOUT_FILENO);
+	close( fout);
+	execlp("apitrace", "apitrace", "dump", tracef);///< we can use execl but we should use the absolute path
+}

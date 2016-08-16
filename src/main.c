@@ -11,6 +11,8 @@
 
 #include "debug.h"
 #include "file.h"
+#include "apitrace.h"
+#include "_time.h"
 
 
 /* typedef enum { False, True} Bool;*/
@@ -53,9 +55,61 @@ int main( int argc, char **argv)
 		else if( i > 1)
 			errUsage();
 	}
+	
+	const int fnum = index;
 
+	//ptracef tfiles = new_tracef( fnum, fnames);
+
+	pid_t cpid = fork();
+	time_t start, end;
+
+	int status;
+
+	start = get_time();
+
+	if( cpid < 0){
+		eprintf("fork error");
+		exit( EXIT_FAILURE);
+	}
+	else if( cpid == 0){
+		
+		pid_t *pids = ( pid_t*) malloc( sizeof( pid_t) * fnum);
+
+		for( int i = 0; i < fnum; i++)
+		{
+			dprintf("for i = %d, pid = %d\n", i, pids[i]);
+			pids[i] = fork();
+
+			if( pids[i] < 0){
+				eprintf("fork error");
+				exit( EXIT_FAILURE);
+			}
+			else if( pids[i] == 0){
+				dprintf("prepare to exec_dump_file");
+				char ct[10];
+				sprintf( ct, "test%d", i);
+				dprintf("ct = %s", ct);
+				exec_dump_file( fnames[i], ct);
+				exit( 0);
+			}
+		}
+		for( int i = 0; i < fnum; i++)
+			waitpid( pids[i], &status, 0);
+		
+		end = get_time();
+		dprintf("All work is complete. It take %lf sec\n", diff_time( start, end));
+		exit( 0);
+	}
+	else
+		waitpid( cpid, &status , 0);
+	end = get_time();
+	dprintf("All work is complete. It take %lf sec\n", diff_time( start, end));
+
+	//statistic( );
 
 	free( fnames);
+
+	return 0;
 }
 
 void errUsage( void)
@@ -71,6 +125,7 @@ void dir_situation( void)
 	
 	while(1){
 		printf("dir is exist, are you sure to dump into it? y/n\n");
+		tmp = getchar();
 		if( tmp = getchar()){
 			switch ( tmp){
 					case 'y':

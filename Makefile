@@ -6,7 +6,8 @@ EXEC = \
 
 OBJS = \
 	file.o \
-	apitrace.o
+	apitrace.o \
+	_time.o
 
 CC = gcc
 

@@ -103,7 +103,9 @@ int main( int argc, char **argv)
 	else
 		waitpid( cpid, &status , 0);
 	end = get_time();
-	dprintf("All work is complete. It take %lf sec\n", diff_time( start, end));
+	printf("All work is complete. It take %lf sec\n", diff_time( start, end));
+
+
 
 	//statistic( );
 

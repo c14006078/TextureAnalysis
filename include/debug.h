@@ -1,3 +1,8 @@
+#define syserr( variable, function) \
+	if( variable){ \
+		perror( function); \
+		exit( EXIT_FAILURE);} 
+
 #ifdef DEBUG 
 	//printf("\n****************\n	DEBUG	\n****************\n");
 	#define dprintf( ...) printf( "DEBUG: " __VA_ARGS__ )

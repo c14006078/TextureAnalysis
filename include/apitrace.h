@@ -8,7 +8,10 @@
 #include <fcntl.h>
 
 #include "debug.h"
+#include "file.h"
 #include "ipc.h"
+
+#define PROCESS_NUM 4
 
 typedef unsigned long long lint;///< avoid the 
 
@@ -40,10 +43,6 @@ pinstr append_instr( pinstr hNode, long call);
 
 ptracef new_tracef( int fnum, char** fname);
 
-void apitrace_dump( char *tracef);
+void main_dump_blob( char** fnames, int fnum, char* dname);
 
-void apitrace_dump_pipe( char *tracef);
-
-void apitrace_dump_file( char *tracef, char* outfile);
-
-void exec_dump_file( char *tracef, char* outfile);
+void exec_sh( char* cmd);

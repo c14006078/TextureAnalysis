@@ -60,48 +60,12 @@ int main( int argc, char **argv)
 
 	//ptracef tfiles = new_tracef( fnum, fnames);
 
-	pid_t cpid = fork();
 	time_t start, end;
-
-	int status;
 
 	start = get_time();
 
-	if( cpid < 0){
-		eprintf("fork error");
-		exit( EXIT_FAILURE);
-	}
-	else if( cpid == 0){
-		
-		pid_t *pids = ( pid_t*) malloc( sizeof( pid_t) * fnum);
+	main_dump_blob( fnames, fnum, dname);
 
-		for( int i = 0; i < fnum; i++)
-		{
-			dprintf("for i = %d, pid = %d\n", i, pids[i]);
-			pids[i] = fork();
-
-			if( pids[i] < 0){
-				eprintf("fork error");
-				exit( EXIT_FAILURE);
-			}
-			else if( pids[i] == 0){
-				dprintf("prepare to exec_dump_file");
-				char ct[10];
-				sprintf( ct, "test%d", i);
-				dprintf("ct = %s", ct);
-				exec_dump_file( fnames[i], ct);
-				exit( 0);
-			}
-		}
-		for( int i = 0; i < fnum; i++)
-			waitpid( pids[i], &status, 0);
-		
-		//end = get_time();
-		//dprintf("All work is complete. It take %lf sec\n", diff_time( start, end));
-		exit( 0);
-	}
-	else
-		waitpid( cpid, &status , 0);
 	end = get_time();
 	printf("All work is complete. It take %lf sec\n", diff_time( start, end));
 
@@ -124,19 +88,21 @@ void errUsage( void)
 void dir_situation( void)
 {
 	char tmp;
+
+	printf("dir is exist, are you sure to dump into it? y/n\n");
 	
-	while(1){
-		printf("dir is exist, are you sure to dump into it? y/n\n");
-		tmp = getchar();
-		if( tmp = getchar()){
-			switch ( tmp){
-					case 'y':
-						return;
-					case 'n':
-						errUsage();
-					default:
-						;
-			}
+	while( (tmp =getchar()) != '\n' ){
+
+		dprintf("getchar() = %c\n", tmp);
+
+		switch ( tmp){
+			case 'y':
+				return;
+			case 'n':
+				errUsage();
+			default:
+				;
 		}
+		printf("dir is exist, are you sure to dump into it? y/n\n");
 	}
 }

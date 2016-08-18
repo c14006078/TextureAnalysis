@@ -58,85 +58,59 @@ void trace_analysis()
 
 fill_instr();*/
 
-void apitrace_dump( char *tracef)
+void main_dump_blob( char** fnames,	int fnum, char* dname)
 {
-	pid_t cpid = fork();
 	int status;
 
-	if( cpid < 0){
-		eprintf( "fork error");
-		exit( EXIT_FAILURE);
-	}
-	else if ( cpid == 0)///< Child proc
-		execlp("apitrace", "apitrace", "dump", tracef);///< we can use execl but we should use the absolute path
-	else///< Parent proc
-		waitpid( cpid, &status, 0);
-		dprintf("Child complete\n");
-}
-
-
-
-
-
-void apitrace_dump_pipe( char *tracef)
-{
 	pid_t cpid = fork();
-	int status;
-
-	fd pi[2];
-	pipe( pi);
-
-	if( cpid < 0){
-		eprintf( "fork error");
-		exit( EXIT_FAILURE);
-	}
-	else if ( cpid == 0){///< Child proc
-		close( pi[ in]);
-		dup2( pi[out], STDOUT_FILENO);
-
-		execlp("apitrace", "apitrace", "dump", tracef);///< we can use execl but we should use the absolute path
-		exit( 0);
-	}
-	else{///< Parent proc
-		close( pi[ out]);
-
-		waitpid( cpid, &status, 0);
-		dprintf("Child complete\n");
-	}
-}
-
-void apitrace_dump_file( char *tracef, char* outfile)
-{
-	pid_t cpid = fork();
-	int status;
-
-	if( cpid < 0){
-		eprintf( "fork error");
-		exit( EXIT_FAILURE);
-	}
-	else if ( cpid == 0){///< Child proc
+	syserr( cpid < 0, "fork");
+	
+	if( cpid == 0){//
 		
-		fd fout = creat( outfile, 0644); ///< == open( "test", O_WRONLY | O_CREAT | O_TRUNC );
-		if( fout == -1){ perror("create"); exit( 0);}
-		dup2( fout, STDOUT_FILENO);
-		close( fout);
+		pid_t *pids = ( pid_t*) malloc( sizeof( pid_t) * fnum);
 
-		execlp("apitrace", "apitrace", "dump", tracef);///< we can use execl but we should use the absolute path
-		exit( 0);
-	}
-	else{///< Parent proc
+		for( int i = 0; i < fnum; i+= PROCESS_NUM )
+		{
+			dprintf("for i = %d, pid = %d\n", i, pids[i]);
 
-		waitpid( cpid, &status, 0);
-		dprintf("Child complete\n");
+			for( int j = 0; i + j < fnum && j < PROCESS_NUM ; j++){
+				pids[i+j] = fork();
+				syserr( pids[i+j] < 0, "fork");
+
+				if( pids[i+j] == 0){
+					dprintf("prepare to exec_dump_file\n");
+				
+					char outfile[200];
+					
+					apen_dir_file( dname, fnames[i+j], outfile);
+					//strcat( outfile, ".blob.calls.txt"); ///< string cat can't handle the '.' at begin
+					strcat( outfile, "_blob.calls");
+					dprintf("outfile = %s\n", outfile);
+
+					char cmd[400];
+					sprintf( cmd, "apitrace dump %s | grep blob > %s", fnames[i+j], outfile);
+					dprintf("dump cmd = %s\n", cmd);
+					exec_sh( cmd);
+					dprintf("If u see this, it means exec not exit\n");
+				}
+			}
+			for( int k = 0; k + i < fnum && k < PROCESS_NUM ; k++)
+			{
+				dprintf("wait for pids[%d] = %d\n", k, (int) pids[i+k]);
+				waitpid( pids[i+k], &status, 0);
+			}
+		}
+		dprintf("fork main dump is done\n");
+		exit(0);
 	}
+	else
+		waitpid( cpid, &status , 0);
+	dprintf("all dump is finish\n");
 }
 
-void exec_dump_file( char *tracef, char* outfile)
+void exec_sh( char* cmd)
 {
-	fd fout = creat( outfile, 0644); ///< == open( "test", O_WRONLY | O_CREAT | O_TRUNC );
-	//fd fout = open( outfile, O_WRONLY | O_CREAT | O_TRUNC | O_APPEND );
-	if( fout == -1){ perror("create"); exit( 0);}
-	dup2( fout, STDOUT_FILENO);
-	close( fout);
-	execlp("apitrace", "apitrace", "dump", tracef, NULL);///< we can use execl but we should use the absolute path
+	int ret = execl( "/bin/sh", "sh", "-c", cmd, NULL);
+	syserr( ret == -1, "execl");
+	exit( 0);
 }

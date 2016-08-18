@@ -1,8 +1,13 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
 #include <stdbool.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <assert.h>
+#include <string.h>
+#include <libgen.h>
 
 #include "debug.h"
 
@@ -22,5 +27,6 @@
  */
 bool fexist( char* fname);
 
-
 bool mkd( char* dname, mode_t mode);
+
+void apen_dir_file( char* dir, char* file, char* out);///< i fail with strdup

@@ -140,3 +140,18 @@ void exec_dump_file( char *tracef, char* outfile)
 	close( fout);
 	execlp("apitrace", "apitrace", "dump", tracef);///< we can use execl but we should use the absolute path
 }
+
+void cmd_dump_file( char* tracef, char* outpath)
+{
+	char cmd[200] = "apitrace dump ";
+	strcat( cmd, tracef);
+	//strcat( cmd, " |grep blob | tr \"(\" \" \" | tr \")\" \" \" > ");
+	strcat( cmd, " |grep blob | tr \"(\" \" \" | tr \")\" \" \" > ");
+	/*strcat( ret, outdir);
+	strcat( ret, basename( tracef));
+	strcat( ret, ".blob.calls");*/
+	strcat( cmd, outpath);
+	dprintf("cmd = %s\n", cmd);
+	system(cmd);
+}
+

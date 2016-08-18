@@ -27,3 +27,9 @@ bool mkd( char* dname, mode_t mode )
 	}
 }
 
+void outblobfile( char* dir, char* file, char* dst)
+{
+	strcat( dst, dir);
+	strcat( dst, basename( file));
+	strcat( dst, ".blob.calls");
+}

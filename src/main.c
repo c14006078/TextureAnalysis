@@ -60,40 +60,24 @@ int main( int argc, char **argv)
 
 	time_t start, end;
 
-	int status, fnum = index;
+	int fnum = index;
 
+	start = get_time();
+	char** dumpFiles = (char**) malloc( sizeof( char*) * fnum);
 	for( int i = 0; i < fnum; i++)
 	{
-		char cmd[100] = "apitrace dump ";
+		/*char cmd[100] = "apitrace dump ";
 		strcat( cmd, fnames[i]);
 		strcat( cmd, " |grep blob");
 		dprintf("cmd = %s\n", cmd);
-		system(cmd);
-	}
-
-	/*for( int i = 0; i < fnum; i++)
-	{
-		pid_t cpid = fork();
-		start = get_time();
+		system(cmd);*/
 		
-		if( cpid < 0){
-			eprintf("fork error");
-			exit( EXIT_FAILURE);
-		}
-		else if( cpid == 0){
-	
-			//execl("/bin/sh", "sh", "apitrace dump ../f.trace/abgr.trace | grep blob", NULL);
-			system( "apitrace dump " fnames[i] " | grep blob");
-			end = get_time();
-			dprintf("All work is complete. It take %lf sec\n", diff_time( start, end));
-			exit( 0);
-		}
-		else{
-			waitpid( cpid, &status , 0);
-			end = get_time();
-			dprintf("All work is complete. It take %lf sec\n", diff_time( start, end));
-		}
-	}*/
+		outblobfile( dname, fnames[i], dumpFiles[i]);
+		dprintf("dumpFIle[%d] = %s\n", i, dumpFiles[i]);
+		cmd_dump_file( fnames[i], dumpFiles[i]);
+	}
+	end = get_time();
+	printf("It take %lf s\n", diff_time( start, end));
 	//statistic( );
 
 	free( fnames);
@@ -111,19 +95,16 @@ void errUsage( void)
 void dir_situation( void)
 {
 	char tmp;
-	
-	while(1){
+	do{
 		printf("dir is exist, are you sure to dump into it? y/n\n");
 		tmp = getchar();
-		if( tmp = getchar()){
-			switch ( tmp){
-					case 'y':
-						return;
-					case 'n':
-						errUsage();
-					default:
-						;
-			}
+		switch ( tmp){
+			case 'y':
+				return;
+			case 'n':
+				errUsage();
+			default:
+				;
 		}
-	}
+	}while( tmp != '\n');
 }

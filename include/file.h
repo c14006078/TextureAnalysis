@@ -3,6 +3,8 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <string.h>
+#include <libgen.h>
 
 #include "debug.h"
 
@@ -24,3 +26,5 @@ bool fexist( char* fname);
 
 
 bool mkd( char* dname, mode_t mode);
+
+void outblobfile( char* dir, char* file, char* dst);

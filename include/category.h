@@ -6,8 +6,12 @@
 #include "debug.h"
 
 #define MAX_NAME_LENGTH 30
+#define MAX_CATE_NUM 10
 
-typedef struct category *encyclopedia;
+typedef struct encyclopedia{
+	int cate_num;
+	struct category* pcate[ MAX_CATE_NUM];
+}encyclopedia;
 
 typedef struct category{
 	char category[ MAX_NAME_LENGTH];
@@ -19,10 +23,14 @@ typedef struct glapi{
 	struct glapi* next;
 } glapi;
 
-encyclopedia new_pedia( int cn);
+encyclopedia* new_pedia( void);
+
+category* new_cateNode( char* name);
 
 glapi* new_apiNode( char* name);
 
-encyclopedia cfg_paser( char* file);
+encyclopedia* cfg_paser( char* file);
 
-void show_pedia( encyclopedia book, int cn);
+//int cfg_cate_num( char* file);
+
+void show_pedia( encyclopedia* book);

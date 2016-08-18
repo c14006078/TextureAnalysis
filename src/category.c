@@ -1,13 +1,22 @@
 #include "category.h"
 
-encyclopedia new_pedia( int cn)
+encyclopedia* new_pedia( void )
 {
 	dprintf("new_pedia\n");
-	encyclopedia dir = ( encyclopedia) malloc( sizeof( category) * cn );
-	dir->include = NULL;
-	dir->category[0] = '\0';
+	encyclopedia* dir = ( encyclopedia*) malloc( sizeof( encyclopedia) );
+	dir->cate_num = 0;
+	for( int i = 0; i < MAX_CATE_NUM; i++) dir->pcate[i] = NULL;
 
 	return dir;
+}
+
+category* new_cateNode( char* name)
+{
+	category* cate = ( category*) malloc( sizeof( category));
+	strcpy( cate->category, name);
+	cate->include = NULL;
+
+	return cate;
 }
 
 glapi* new_apiNode( char* name)
@@ -20,18 +29,20 @@ glapi* new_apiNode( char* name)
 }
 
 /*TEMP for one category*/
-encyclopedia cfg_paser( char* file)
+encyclopedia* cfg_paser( char* file)
 {
+	//int cn = cfg_cate_num( file);//, gindex = 0;
+	
+	//dprintf("cn = %d\n", cn);
+
 	assert( fexist( file) && "file doesn't exist");
 	FILE* f = fopen( file, "r");
 	syserr( !f, "fopen");
 
-	int cn = 2, cindex = 0;//, gindex = 0;
-	
-	encyclopedia dir = new_pedia( cn);
+	encyclopedia* dir = new_pedia();
 	
 	glapi* tmp;	
-	encyclopedia ndir = dir;
+	category* ncate;
 
 	dprintf("prepare to while loop\n");
 	char buf[50], *p;
@@ -41,14 +52,15 @@ encyclopedia cfg_paser( char* file)
 			*p = '\0';
 
 		if( buf[0] != '\t'){
-			ndir = dir + cindex++;
-			strcpy( ndir->category, buf);
-			tmp = ndir->include;
+			ncate = new_cateNode( buf);
+			dir->pcate[ dir->cate_num++]  = ncate;
+			strcpy( ncate->category, buf);
+			tmp = ncate->include;
 		}
 		else{
 			if( tmp == NULL){
-				ndir->include = new_apiNode( buf + 1);
-				tmp = ndir->include;
+				ncate->include = new_apiNode( buf + 1);
+				tmp = ncate->include;
 			}
 			else{
 				tmp->next = new_apiNode( buf + 1);
@@ -61,18 +73,35 @@ encyclopedia cfg_paser( char* file)
 	return dir;
 }
 
-void show_pedia( encyclopedia book, int cn)
+/*int cfg_cate_num( char* file)
+{
+	assert( fexist( file) && "file doesn't exist");
+	FILE* f = fopen( file, "r");
+	syserr( !f, "fopen");
+
+	int cate_num = 0;
+	do{
+		fgets( cfg, 50, f);
+		if( cfg[0] != '\t')
+			cate_num++;
+	}while( !feof(f))
+	
+	close( f);
+
+	return cate_num;
+}*/
+
+void show_pedia( encyclopedia* book)
 {
 	
 	glapi* tmp;
-	encyclopedia ndir;
 
-	for( int i = 0; i < cn ; i++){
+	for( int i = 0; i < book->cate_num ; i++){
 		
-		ndir = book +i;
-		tmp = ndir->include;
+		category* cate = book->pcate[ i];
 
-		printf("Category: %s\n", ndir->category);
+		tmp = cate->include;
+		printf("Category: %s\n", cate->category);
 
 		if( tmp == NULL) printf("\tnothing in this category\n");
 		while( tmp != NULL)

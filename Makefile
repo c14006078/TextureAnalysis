@@ -2,12 +2,14 @@ EXEC = \
 	main \
 	test-file \
 	test-dump-stdout \
-	test-dump-file
+	test-dump-file \
+	test-cfg-parser
 
 OBJS = \
 	file.o \
 	apitrace.o \
-	_time.o
+	_time.o \
+	category.o
 
 CC = gcc
 
@@ -17,7 +19,7 @@ LDFLAGS=
 INC_PATH = -I include
 
 ifeq ($(strip $(DEBUG)),1)
-CFLAGS += -DDEBUG -g
+CFLAGS += -DDEBUG -g3
 endif
 
 all: $(EXEC)

@@ -1,11 +1,13 @@
 EXEC = \
 	main \
-	test-file
+	test-file \
+	test-cfg-parser
 
 OBJS = \
 	file.o \
 	apitrace.o \
-	_time.o
+	_time.o \
+	category.o 
 
 CC = gcc
 

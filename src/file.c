@@ -27,13 +27,20 @@ bool mkd( char* dname, mode_t mode )
 	}
 }
 
-void apen_dir_file( char* dir, char* file, char* out)
+void apen_dir_file( char* dir, char** file, int n, char** out)
 {
 	assert( fexist( dir) && "dir not exist");
 
-	strcpy( out, dir);
-	if( out[ strlen( out) - 1] != '/' )strcat( out, "/");
-	assert( fexist( file) && "file not exist");
-	strcat( out, basename( file));
+	for ( int i = 0; i < n; i++){
+		strcpy( out[i], dir);
+		if( out[i][ strlen( out[i]) - 1] != '/' ) strcat( out[i], "/");
+		assert( fexist( file[i]) && "file not exist");
+		strcat( out[i], basename( file[i]));
+	}
 }
 
+void apen_suffix( char** in, char* str, int n)
+{
+	for ( int i = 0; i < n; i++)
+		strcat( in[i], str);
+}

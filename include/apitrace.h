@@ -7,41 +7,12 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+#include "constant.h"
+
 #include "debug.h"
 #include "file.h"
 #include "ipc.h"
-
-#define PROCESS_NUM 4
-
-typedef unsigned long long lint;///< avoid the 
-
-typedef struct clink *plink;
-typedef struct instr *pinstr;
-typedef struct tracef *ptracef;
-
-typedef struct clink{
-	lint call; ///< calls maybe overflow
-	plink next;
-}clink;
-
-typedef struct instr{
-	char* name;
-	unsigned int count;
-	plink calls;
-	plink last;
-	pinstr next;
-}instr;
-
-typedef struct tracef{
-	char* name;
-	pinstr p;
-} tracef;
-
-pinstr new_instr( char* instrName);
-
-pinstr append_instr( pinstr hNode, long call);
-
-ptracef new_tracef( int fnum, char** fname);
+#include "context.h"
 
 void main_dump_blob( char** fnames, int fnum, char* dname);
 

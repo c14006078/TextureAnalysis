@@ -4,9 +4,7 @@
 
 #include "file.h"
 #include "debug.h"
-
-#define MAX_NAME_LENGTH 30
-#define MAX_CATE_NUM 10
+#include "constant.h"
 
 typedef struct encyclopedia{
 	int cate_num;

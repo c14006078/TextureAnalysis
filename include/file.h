@@ -10,6 +10,7 @@
 #include <libgen.h>
 
 #include "debug.h"
+#include "constant.h"
 
 
 //typedef enum { False, True} Bool; ///< we use C99 <stdbool.h>
@@ -29,4 +30,5 @@ bool fexist( char* fname);
 
 bool mkd( char* dname, mode_t mode);
 
-void apen_dir_file( char* dir, char* file, char* out);///< i fail with strdup
+void apen_dir_file( char* dir, char** file, int n, char** out);///< i fail with strdup
+void apen_suffix( char** in, char* str, int n);

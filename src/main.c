@@ -13,6 +13,7 @@
 #include "file.h"
 #include "apitrace.h"
 #include "_time.h"
+#include "category.h"
 
 
 /* typedef enum { False, True} Bool;*/
@@ -20,7 +21,9 @@
 
 void errUsage( void );
 void dir_situation( void);
-
+char** dump_name( char** fnames, int fnum, char* dname);
+void statistic( char** dump_file, int fnum);
+char** creat_blob( char** fnames, int fnum, char* dname);
 /**
  *	./main OUT_DIR TRACEFILE1 TRACEFILE2 ...
  *
@@ -60,6 +63,10 @@ int main( int argc, char **argv)
 
 	//ptracef tfiles = new_tracef( fnum, fnames);
 
+	/**
+	 *	dump file:
+	 *
+	 */
 	time_t start, end;
 
 	start = get_time();
@@ -67,11 +74,20 @@ int main( int argc, char **argv)
 	main_dump_blob( fnames, fnum, dname);
 
 	end = get_time();
-	printf("All work is complete. It take %lf sec\n", diff_time( start, end));
+	printf("All dump work is complete. It take %lf sec\n", diff_time( start, end));
 
+	/**
+	 *
+	 *	statistic
+	 *
+	 */
 
+	char** dump_file = creat_blob( fnames, fnum, dname);
 
-	//statistic( );
+	statistic( dump_file, fnum);
+
+	encyclopedia* group = cfg_paser( "group.cfg");
+
 
 	free( fnames);
 
@@ -105,4 +121,48 @@ void dir_situation( void)
 		}
 		printf("dir is exist, are you sure to dump into it? y/n\n");
 	}
+}
+
+/*char** dump_name( char** fnames, int fnum, char* dname)
+{
+	char** tmp = ( char**) malloc( sizeof(char*) * fnum);
+	for( int i = 0; i < fnum; i++) tmp[ i] = (char*) malloc( sizeof( char) * 50);
+
+	for( int i = 0; i < fnum; i++)
+	{
+		apen_dir_file( dname, fnames[i], tmp[i]);
+		strcat( tmp[i], "_blob.calls");
+	}
+
+	return tmp;
+}*/
+
+/*void statistic( char** dump_file, int fnum)
+{
+	char buf[400];
+	
+	for( int i = 0; i < fnum; i++){
+		strcpy( buf, dump_file[i]);
+		strcpy( buf, " ");
+	}
+
+	char cmd[ 500];
+	sprintf( cmd, "cat %s | awk '{print $2}'| sort | uniq -c", buf);
+	dprintf("system( cmd): %s", cmd);
+	system( cmd);
+}*/
+
+char** creat_blob( char** fnames, int fnum, char* dname)
+{
+	/*Init outfile name*/
+	char** outfile = (char **) malloc( sizeof( char*) * fnum);
+	for( int i = 0; i < fnum; i++){
+		outfile[i] = (char*) malloc( sizeof( char) * MAX_FILE_PATH);
+		outfile[i][0] = '\0';
+	}
+	/*append suffix*/
+	apen_dir_file( dname, fnames, fnum, outfile);
+	apen_suffix( outfile, "_blob.calls", fnum);	//strcat( outfile, ".blob.calls.txt"); ///< string cat can't handle the '.' at begin
+
+	return outfile;
 }

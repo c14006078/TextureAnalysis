@@ -44,3 +44,20 @@ void apen_suffix( char** in, char* str, int n)
 	for ( int i = 0; i < n; i++)
 		strcat( in[i], str);
 }
+
+char* ret_cwd( void)
+{
+	char* cwd = ( char*) malloc( sizeof( char) * MAX_FILE_PATH);
+
+	syserr( !getcwd( cwd, MAX_FILE_PATH), "getcwd");
+	return cwd;
+}
+
+char* ret_realpath( char* path)
+{
+	char* real = (char*) malloc( sizeof( char) * MAX_FILE_PATH);
+	
+	realpath( path, real);
+
+	return real;
+}

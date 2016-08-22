@@ -14,6 +14,7 @@ category* new_cateNode( char* name)
 {
 	category* cate = ( category*) malloc( sizeof( category));
 	strcpy( cate->category, name);
+	cate->gl_num = 0;
 	cate->include = NULL;
 
 	return cate;
@@ -60,6 +61,7 @@ encyclopedia* cfg_paser( char* file)
 		else{
 			if( tmp == NULL){
 				ncate->include = new_apiNode( buf + 1);
+				ncate->gl_num++;
 				tmp = ncate->include;
 			}
 			else{
@@ -110,4 +112,19 @@ void show_pedia( encyclopedia* book)
 			tmp = tmp->next;
 		}
 	}
+}
+
+void create_pattern( category* cate, char* pattern)
+{
+	glapi* p = cate->include;
+	assert( ( p != NULL) && "category include nothing");
+	for( int i = 0; p != NULL;  p = p->next, i++)
+	{
+		if( i == 0) strcat( pattern, p->name);
+		else{
+			strcat( pattern, "\\|");
+			strcat( pattern, p->name);
+		}
+	}
+	dprintf("pattern = %s\n", pattern);
 }

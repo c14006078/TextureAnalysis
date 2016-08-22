@@ -14,6 +14,10 @@
 #include "ipc.h"
 #include "context.h"
 
-void main_dump_blob( char** fnames, int fnum, char* dname);
+void main_dump_blob( char** fnames,	int fnum, char* dname, char** dump_file);
 
 void exec_sh( char* cmd);
+
+void statistic( char** file, int fnum);
+
+void main_filter( char** fnames,	int fnum, char* pattern, char** filter_file);

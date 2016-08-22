@@ -13,6 +13,7 @@ typedef struct encyclopedia{
 
 typedef struct category{
 	char category[ MAX_NAME_LENGTH];
+	int gl_num;
 	struct glapi *include;
 }category;
 
@@ -32,3 +33,5 @@ encyclopedia* cfg_paser( char* file);
 //int cfg_cate_num( char* file);
 
 void show_pedia( encyclopedia* book);
+
+void create_pattern( category* cate, char* pattern);

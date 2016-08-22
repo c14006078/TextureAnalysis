@@ -24,6 +24,7 @@ void dir_situation( void);
 char** dump_name( char** fnames, int fnum, char* dname);
 void statistic( char** dump_file, int fnum);
 char** creat_blob( char** fnames, int fnum, char* dname);
+char*** creat_group( char** dump_file, int fnum, encyclopedia* group);
 /**
  *	./main OUT_DIR TRACEFILE1 TRACEFILE2 ...
  *
@@ -68,10 +69,12 @@ int main( int argc, char **argv)
 	 *
 	 */
 	time_t start, end;
+	char** dump_file = creat_blob( fnames, fnum, dname);
+
 
 	start = get_time();
 
-	main_dump_blob( fnames, fnum, dname);
+	main_dump_blob( fnames, fnum, dname, dump_file);
 
 	end = get_time();
 	printf("All dump work is complete. It take %lf sec\n", diff_time( start, end));
@@ -82,14 +85,22 @@ int main( int argc, char **argv)
 	 *
 	 */
 
-	char** dump_file = creat_blob( fnames, fnum, dname);
-
 	statistic( dump_file, fnum);
-
-	load_context( dump_file, fnum);
 
 	encyclopedia* group = cfg_paser( "group.cfg");
 
+	char*** filter_file = creat_group( dump_file, fnum, group);
+
+	char** pattern = ( char**) malloc( sizeof( char*) *group->cate_num);
+
+	folder** fders = ( folder**) malloc( sizeof( folder*) * group->cate_num);
+
+	for( int i = 0; i < group->cate_num; i++){
+		pattern[i] = (char* ) malloc( sizeof( char) * MAX_PATTERN_LENGTH);
+		create_pattern( group->pcate[i], pattern[i]);
+		main_filter( dump_file, fnum, pattern[i], filter_file[i]);
+		fders[i] = load_context( filter_file[i], fnum);
+	}
 
 	free( fnames);
 
@@ -138,4 +149,25 @@ char** creat_blob( char** fnames, int fnum, char* dname)
 	apen_suffix( outfile, "_blob.calls", fnum);	//strcat( outfile, ".blob.calls.txt"); ///< string cat can't handle the '.' at begin
 
 	return outfile;
+}
+
+char*** creat_group( char** dump_file, int fnum, encyclopedia* group)
+{
+	char*** set = (char***) malloc( sizeof(char **) * group->cate_num);
+
+	for( int i = 0; i < group->cate_num; i++)
+	{
+		set[i] = ( char **) malloc( sizeof( char*) * group->pcate[i]->gl_num);
+		char* cate_name = group->pcate[i]->category;
+		for( int j = 0; j < fnum; j++)
+		{
+			set[i][j] = (char *) malloc( sizeof( char) * MAX_FILE_PATH);
+			strcpy( set[i][j], dump_file[j]);
+			strcat( set[i][j],"_");
+			strcat( set[i][j], cate_name);
+			strcat( set[i][j],"_match");
+		}
+	}
+
+	return set;
 }

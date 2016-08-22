@@ -103,7 +103,7 @@ void parse_tfile( FILE* f, tfile* tf)
 		if( (p = strchr( buf, '\n')) != NULL)///< it work with extendition
 			p = '\0';
 
-		sscanf( buf, "%lld %[^(]", &call, &instrname);
+		sscanf( buf, "%lld %[^(]", &call, instrname);
 
 		if( plast == NULL)
 			plast = (tf->head = init_instr( tf, instrname, call));

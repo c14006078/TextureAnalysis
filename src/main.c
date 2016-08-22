@@ -86,6 +86,8 @@ int main( int argc, char **argv)
 
 	statistic( dump_file, fnum);
 
+	load_context( dump_file, fnum);
+
 	encyclopedia* group = cfg_paser( "group.cfg");
 
 
@@ -122,35 +124,6 @@ void dir_situation( void)
 		printf("dir is exist, are you sure to dump into it? y/n\n");
 	}
 }
-
-/*char** dump_name( char** fnames, int fnum, char* dname)
-{
-	char** tmp = ( char**) malloc( sizeof(char*) * fnum);
-	for( int i = 0; i < fnum; i++) tmp[ i] = (char*) malloc( sizeof( char) * 50);
-
-	for( int i = 0; i < fnum; i++)
-	{
-		apen_dir_file( dname, fnames[i], tmp[i]);
-		strcat( tmp[i], "_blob.calls");
-	}
-
-	return tmp;
-}*/
-
-/*void statistic( char** dump_file, int fnum)
-{
-	char buf[400];
-	
-	for( int i = 0; i < fnum; i++){
-		strcpy( buf, dump_file[i]);
-		strcpy( buf, " ");
-	}
-
-	char cmd[ 500];
-	sprintf( cmd, "cat %s | awk '{print $2}'| sort | uniq -c", buf);
-	dprintf("system( cmd): %s", cmd);
-	system( cmd);
-}*/
 
 char** creat_blob( char** fnames, int fnum, char* dname)
 {

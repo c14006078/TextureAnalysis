@@ -75,7 +75,7 @@ void statistic( char** file, int fnum)
 	}
 
 	char cmd[ 500];
-	sprintf( cmd, "cat %s | awk '{print $2}'| sort | uniq -c", buf);
+	sprintf( cmd, "cat %s | tr '(' ' ' | awk '{print $2}'| sort | uniq -c", buf);
 	dprintf("system( cmd): %s\n", cmd);
 	system( cmd);
 }

@@ -13,7 +13,7 @@ int main( int argc, char** argv)
 	unsigned char buf[1024], md5[16];
 	FILE* file = fopen( fname, "rb");
 
-	while( (bytes = fread( buf, 1, 1024, file) != 0 ))
+	while( (bytes = fread( buf, 1, 1024, file)) != 0 )
 		MD5_Update( &ctx, buf, bytes);
 
 	MD5_Final( md5, &ctx);

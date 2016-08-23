@@ -9,7 +9,8 @@ OBJS = \
 	apitrace.o \
 	_time.o \
 	category.o \
-	context.o
+	context.o \
+	md5.o
 
 CC = gcc
 

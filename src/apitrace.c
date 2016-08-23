@@ -112,3 +112,48 @@ void main_filter( char** fnames,	int fnum, char* pattern, char** filter_file)
 		waitpid( cpid, &status , 0);
 	dprintf("all dump is finish\n");
 }
+
+void main_dump_bin( char** fnames,	int fnum, char* callset, char** filter_file)
+{
+	int status;
+	char* cwd = ret_cwd();
+	
+	pid_t cpid = fork();
+	syserr( cpid < 0, "fork");
+	
+	if( cpid == 0){//
+		
+		pid_t *pids = ( pid_t*) malloc( sizeof( pid_t) * fnum);
+
+		for( int i = 0; i < fnum; i+= PROCESS_NUM )
+		{
+
+			for( int j = 0; i + j < fnum && j < PROCESS_NUM ; j++){
+				pids[i+j] = fork();
+				syserr( pids[i+j] < 0, "fork");
+
+				if( pids[i+j] == 0){
+					dprintf("prepare to exec_dump_file\n");
+
+					char cmd[1000];
+					sprintf( cmd, "apitrace dump %s -calls=%s --blobs"
+						, fnames[i+j], callset);
+					dprintf("match cmd = %s\n", cmd);
+					exec_sh( cmd);
+					exit( 0);
+					dprintf("If u see this, it means exec not exit\n");
+				}
+			}
+			for( int k = 0; k + i < fnum && k < PROCESS_NUM ; k++)
+			{
+				dprintf("wait for pids[%d] = %d\n", k, (int) pids[i+k]);
+				waitpid( pids[i+k], &status, 0);
+			}
+		}
+		dprintf("fork main dump is done\n");
+		exit(0);
+	}
+	else
+		waitpid( cpid, &status , 0);
+	dprintf("all dump is finish\n");
+}

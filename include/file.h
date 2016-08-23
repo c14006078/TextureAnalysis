@@ -32,3 +32,7 @@ bool mkd( char* dname, mode_t mode);
 
 void apen_dir_file( char* dir, char** file, int n, char** out);///< i fail with strdup
 void apen_suffix( char** in, char* str, int n);
+
+char* ret_cwd( void);
+
+char* ret_realpath( char* path);

@@ -34,7 +34,7 @@ void apen_dir_file( char* dir, char** file, int n, char** out)
 	for ( int i = 0; i < n; i++){
 		strcpy( out[i], dir);
 		if( out[i][ strlen( out[i]) - 1] != '/' ) strcat( out[i], "/");
-		assert( fexist( file[i]) && "file not exist");
+		//assert( fexist( file[i]) && "file not exist");
 		strcat( out[i], basename( file[i]));
 	}
 }
@@ -56,8 +56,9 @@ char* ret_cwd( void)
 char* ret_realpath( char* path)
 {
 	char* real = (char*) malloc( sizeof( char) * MAX_FILE_PATH);
-	
+
 	realpath( path, real);
+	dprintf("realpath( %s)  = %s\n", path, real);
 
 	return real;
 }

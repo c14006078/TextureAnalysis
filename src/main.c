@@ -8,13 +8,14 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <dirent.h>
 
 #include "debug.h"
 #include "file.h"
 #include "apitrace.h"
 #include "_time.h"
 #include "category.h"
-
+#include "md5.h"
 
 /* typedef enum { False, True} Bool;*/
 #define ARRAY_SIZE( arr) (sizeof( arr) / sizeof( arr[0]))///< it only work on arrary
@@ -25,6 +26,9 @@ char** dump_name( char** fnames, int fnum, char* dname);
 void statistic( char** dump_file, int fnum);
 char** creat_blob( char** fnames, int fnum, char* dname);
 char*** creat_group( char** dump_file, int fnum, encyclopedia* group);
+void bin_dump( char* blob_dir,char* match_file, char* tfile);
+void main_md5( char* group_dir);
+
 /**
  *	./main OUT_DIR TRACEFILE1 TRACEFILE2 ...
  *
@@ -101,6 +105,25 @@ int main( int argc, char **argv)
 		main_filter( dump_file, fnum, pattern[i], filter_file[i]);
 		fders[i] = load_context( filter_file[i], fnum);
 	}
+	
+	char** cate_dir = ( char**) malloc( sizeof( char*) * group->cate_num);
+	char** group_dir = ( char**) malloc( sizeof( char*) * group->cate_num);
+	
+	for( int i = 0; i < group->cate_num; i++){
+		cate_dir[i] = ( char*) malloc( sizeof( char) * MAX_FILE_PATH);
+		group_dir[i] = ( char*) malloc( sizeof( char) * MAX_FILE_PATH);
+		strcpy( cate_dir[i], group->pcate[i]->category);
+	}
+
+	apen_dir_file( dname, cate_dir, group->cate_num, group_dir);
+
+	char* cwd = ret_cwd();
+	for( int i = 0; i < group->cate_num; i++){
+		mkdir( group_dir[i], 0700);
+		for( int j = 0; j < fnum; j++)
+			bin_dump( group_dir[i], ret_realpath( filter_file[i][j]), ret_realpath(fnames[j]));
+		main_md5( group_dir[i]);
+	}
 
 	free( fnames);
 
@@ -170,4 +193,86 @@ char*** creat_group( char** dump_file, int fnum, encyclopedia* group)
 	}
 
 	return set;
+}
+
+void bin_dump( char* blob_dir,char* match_file, char* tfile)
+{
+	FILE* fp = fopen( match_file, "r");
+	
+	char buf[300], *p, calls[20], callset[1000], cmd[1500];
+	int k = 0;
+	lint call;
+
+	memset( callset, '\0', 1000);
+	do{
+		fgets( buf, 300, fp);
+		if( (p = strchr( buf, '\n')) != NULL)
+			*p = '\0';
+
+		if( (p = strchr( buf, '\n')) != NULL)
+			*p = '\0';
+		sscanf( buf, "%lld ", &call);
+		sprintf( calls, "%lld", call);
+		strcat( callset, calls);
+		k++;
+		if( k % 6 == 5)
+		{
+			dprintf("callset = %s\n", callset);
+			sprintf( cmd, "cd %s && apitrace dump --calls=%s --blobs %s  && cd -", blob_dir, callset, tfile);
+			dprintf("cmd = %s\n", cmd);
+			system( cmd);
+			memset( buf, '\0', 1000);
+		}
+		else{
+			strcat( callset, ",");
+		}
+	}while( !feof(fp) );
+
+	fclose( fp);
+}
+
+/*char* collect_call( char* tfile)
+{
+	FILE* fp = fopen( tfile, "r");
+	
+	char buf[50], *p;
+	do{
+		fgets( buf, 50, fp);
+		if( (p = strchr( buf, '\n')) != NULL){
+			*p = '\0';
+
+			dir->pcate[ dir->cate_num++]  = ncate;
+			strcpy( ncate->category, buf);
+			tmp = ncate->include;
+		}
+		else{
+			if( tmp == NULL){
+				ncate->include = new_apiNode( buf + 1);
+				ncate->gl_num++;
+				tmp = ncate->include;
+			}
+			else{
+				tmp->next = new_apiNode( buf + 1);
+			}
+		}
+	}while( !feof( fp) );
+
+	fclose( fp);
+}*/
+void main_md5( char* group_dir)
+{
+	DIR* dir = opendir( group_dir);
+	struct dirent* entry;
+	
+	char dst[200], cmd[500];
+	while( (entry = readdir( dir)) != NULL)
+	{
+		memset( dst, '\0', 200);
+		strcpy( dst, group_dir);
+		strcat( dst, "/");
+		strcat( dst, entry->d_name);
+		sprintf( cmd, "md5=$(md5sum %s|awk '{print $1}') && cp %s final/$md5", dst, dst);///<TODO: I create final/ by default, so it need to be auto
+		dprintf("cmd = %s\n", cmd);
+		system(cmd);
+	}
 }

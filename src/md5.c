@@ -16,14 +16,14 @@ char* md5sum( char* file)
 	FILE* fp = fopen( file, "rb");
 	syserr( fp, "fopen");
 
-	while( ( bytes = fread( buf, 1, 1024, file)) != 0)
+	while( ( bytes = fread( buf, 1, 1024, fp)) != 0)
 		MD5_Update( &ctx, buf, bytes);
 
 	for( int i = 0; i < 16; i++){
 		sprintf( tmp, "%02x", md5[i]);
 		strcat( out, tmp);
 	}
-	fclose( file);
+	fclose( fp);
 
 	return out;
 }

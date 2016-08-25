@@ -3,6 +3,8 @@
 #include <openssl/md5.h>
 #include <string.h>
 
+#include "md5.h"
+
 int main( int argc, char** argv)
 {
 	MD5_CTX ctx;
@@ -30,6 +32,10 @@ int main( int argc, char** argv)
 	char cmd[50] = "md5sum ";
 	strcat( cmd, fname);
 	system( cmd);
+
+	fclose( file);
+
+	printf("Function md5: %s\n", md5sum( fname));
 
 	return 0;
 }

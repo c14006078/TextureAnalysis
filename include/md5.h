@@ -6,3 +6,7 @@
 
 #include "file.h"
 #include "debug.h"
+
+char* md5sum( char* file);
+
+char* md5sum1( unsigned char *data, size_t length);

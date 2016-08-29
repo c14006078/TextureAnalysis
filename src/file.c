@@ -14,35 +14,48 @@ bool fexist( char* fname)
 	}
 }
 
+bool isdir( char* dname)
+{
+	struct stat st;
+	if( stat( dname, &st) == 0 && S_ISDIR( st.st_mode)){
+		dprintf("%s is a dir\n", dname);
+		return true;
+	}
+	else{
+		dprintf("%s isn't a dir\n", dname);
+		return false;
+	}
+}
+
 bool mkd( char* dname, mode_t mode )
 {
 	if( fexist( dname)){///<TODO: we should know the relative or absolute path
 		dprintf("dir %s already exist\n", dname);
-		mkdir( dname, mode);
 		return false;
 	}
 	else{
 		dprintf("dir %s not exist\n", dname);
+		mkdir( dname, mode);
 		return true;
 	}
 }
 
-void apen_dir_file( char* dir, char** file, int n, char** out)
+void apen_dir_file( char* dir, char** file, int n, char** out_files)
 {
 	assert( fexist( dir) && "dir not exist");
 
 	for ( int i = 0; i < n; i++){
-		strcpy( out[i], dir);
-		if( out[i][ strlen( out[i]) - 1] != '/' ) strcat( out[i], "/");
+		strcpy( out_files[i], dir);
+		if( out_files[i][ strlen( out_files[i]) - 1] != '/' ) strcat( out_files[i], "/");
 		//assert( fexist( file[i]) && "file not exist");
-		strcat( out[i], basename( file[i]));
+		strcat( out_files[i], basename( file[i]));
 	}
 }
 
-void apen_suffix( char** in, char* str, int n)
+void apen_suffix( char** in, int n, char* suffix)
 {
 	for ( int i = 0; i < n; i++)
-		strcat( in[i], str);
+		strcat( in[i], suffix);
 }
 
 char* ret_cwd( void)

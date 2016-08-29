@@ -35,7 +35,19 @@ int main( int argc, char** argv)
 
 	fclose( file);
 
-	printf("Function md5: %s\n", md5sum( fname));
+	printf("Function filename md5: %s\n", md5sum( fname));
+
+	struct stat st;
+	stat( fname, &st);
+	size_t size = st.st_size;
+
+	printf("file size = %d\n", ( int) size);
+
+	FILE* fp = fopen( fname, "rb");
+	unsigned char* ar = ( unsigned char*) malloc( size);
+	fread( ar, 1, size, fp);
+
+	printf("Function Byte arrary md5: %s\n", md5sum1( ar, size));
 
 	return 0;
 }

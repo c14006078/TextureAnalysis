@@ -46,15 +46,15 @@ char* md5sum1( unsigned char *data, size_t length)
 	unsigned char md5[16];
 
 	int i;
-	for( i = 0; i < length; i += 1024){
+	for( i = 0; (i + 1024) < length; i += 1024){
 		MD5_Update( &ctx, data + i, 1024);
 		dprintf("data = %p, data + i = %p, i = %d\n", data, data + i, i);
 	}
 	
 	if( i != length){
-		int k = 1024 - (length - i + 1024);
+		int k = length - i;
 		dprintf("data = %p, data + k = %p, i = %d, k = %d\n", data, data + i, i, k);
-		MD5_Update( &ctx, data + i -1024, k);
+		MD5_Update( &ctx, data + i, k);
 		dprintf("data = %p, data + i - 1024 = %p, i = %d\n", data, data + i, i);
 	}
 

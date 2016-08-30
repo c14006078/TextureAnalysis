@@ -66,6 +66,7 @@ encyclopedia* cfg_paser( char* file)
 			}
 			else{
 				tmp->next = new_apiNode( buf + 1);
+				tmp = tmp->next;
 			}
 		}
 	}while( !feof(f) );

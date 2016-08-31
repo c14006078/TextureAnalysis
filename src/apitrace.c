@@ -47,7 +47,9 @@ void main_dump_blob( char** fnames,	int fnum, char** dump_files)
 		do{
 			waitpid( cpid, &status , WNOHANG);
 			if( get_time() - time == 1 ){///<TODO: printf() after sleep will be suspend, we should overcome it
-				putchar('.');
+				/*putchar('.');
+				fdatasync( stdout);*/
+				system("echo -n .");
 				time = get_time();
 			}
 		}while( !WIFEXITED( status));
@@ -81,7 +83,10 @@ void statistic( char** file, int fnum)
 	}
 
 	char cmd[ 500];
-	sprintf( cmd, "cat %s | tr '(' ' ' | awk '{print $2}'| sort | uniq -c", buf);
+	sprintf( cmd, "cat %s | tr '(' ' ' | awk '{print $2}'| sort | uniq -c | sort -k 1", buf);
+	dprintf("system( cmd): %s\n", cmd);
+	system( cmd);
+	sprintf( cmd, "cat %s | tr '(' ' ' | awk '{print $2}'| sort | uniq -c | awk '{print $2}' > tmp_cate", buf);///<TODO: More flexible, not use tmp_cate
 	dprintf("system( cmd): %s\n", cmd);
 	system( cmd);
 }
@@ -132,7 +137,9 @@ void main_filter( char** fnames,	int fnum, char* pattern, char** filter_files)
 		do{
 			waitpid( cpid, &status , WNOHANG);
 			if( get_time() - time == 1 ){///<TODO: printf() after sleep will be suspend, we should overcome it
-				putchar('.');
+				/*putchar('.');
+				fdatasync( stdout);*/
+				system("echo -n .");
 				time = get_time();
 			}
 		}while( !WIFEXITED( status));

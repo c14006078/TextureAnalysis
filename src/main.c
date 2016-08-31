@@ -1,5 +1,5 @@
 /**
- *
+ * @file main
  */
 
 #include <stdio.h>
@@ -17,21 +17,17 @@
 #include "category.h"
 #include "md5.h"
 
-/* typedef enum { False, True} Bool;*/
-#define ARRAY_SIZE( arr) (sizeof( arr) / sizeof( arr[0]))///< it only work on arrary
-
-void errUsage( void );
-void dir_situation( void);
+void errUsage( void );///< print the Usage hint
+void dir_situation( char* dname);///< handle the directory is already exist
 char** dump_name( char** fnames, int fnum, char* dname);
 void statistic( char** dump_file, int fnum);
 char** creat_blob( char** fnames, int fnum, char* dname);
 char*** creat_group( char** dump_file, int fnum, encyclopedia* group);
 void bin_dump( char* blob_dir,char* match_file, char* tfile);
-void main_md5( char* group_dir);
+void main_md5( char* group_dir, char* out_dir);
 
 /**
  *	./main OUT_DIR TRACEFILE1 TRACEFILE2 ...
- *
  */
 char *Usage = "Usage: ./main OUT_DIR TRACEFILE1 TRACEFILE2 ...\n";
 
@@ -41,7 +37,8 @@ int main( int argc, char **argv)
 
 	if( argc < 2) errUsage();
 
-	char* dname = NULL;
+	///< dname is the temp dir only build for Debug, dname1 is the output file
+	char dname[20] = "Analysis_TMP", *dname1 = NULL;
 	char** fnames = (char**) malloc( sizeof( char*) * (argc - 2));
 	dprintf("argc = %d, trace file num = %d\n",argc,(argc-2));
 	
@@ -50,12 +47,18 @@ int main( int argc, char **argv)
 		char *arg = argv[i];
 
 		if ( i == 1 && fexist( arg)){
-			dir_situation();
-			dname = arg;
+			if( isdir( arg)){
+				dir_situation( arg);
+				dname1 = arg;
+			}
+			else{
+				eprintf("The OUT_DIR is an exist file not dir\n");
+				errUsage();
+			}
 		}
 		else if ( i == 1){
-			dname = arg;
-			mkdir( dname, 0700);
+			dname1 = arg;
+			mkd( dname1, 0700);
 		}
 			
 		if( i > 1 && fexist( argv[i]))
@@ -63,10 +66,15 @@ int main( int argc, char **argv)
 		else if( i > 1)
 			errUsage();
 	}
+
+	if( fexist( dname)){///<TODO:Maybe we can modify to remove the directory
+		if( isdir( dname))
+			dir_situation( dname);
+	}
+	else
+		mkd( dname, 0700);
 	
 	const int fnum = index;
-
-	//ptracef tfiles = new_tracef( fnum, fnames);
 
 	/**
 	 *	dump file:
@@ -78,7 +86,7 @@ int main( int argc, char **argv)
 
 	start = get_time();
 
-	main_dump_blob( fnames, fnum, dname, dump_file);
+	main_dump_blob( fnames, fnum, dump_file);
 
 	end = get_time();
 	printf("All dump work is complete. It take %lf sec\n", diff_time( start, end));
@@ -88,7 +96,6 @@ int main( int argc, char **argv)
 	 *	statistic
 	 *
 	 */
-
 	statistic( dump_file, fnum);
 
 	encyclopedia* group = cfg_paser( "group.cfg");
@@ -117,12 +124,13 @@ int main( int argc, char **argv)
 
 	apen_dir_file( dname, cate_dir, group->cate_num, group_dir);
 
-	char* cwd = ret_cwd();
+	//char* cwd = ret_cwd();
 	for( int i = 0; i < group->cate_num; i++){
-		mkdir( group_dir[i], 0700);
+		mkd( group_dir[i], 0700);
+		printf("\n\n******************************************\nI am dumping the blob binary file\n****************************************\n");
 		for( int j = 0; j < fnum; j++)
 			bin_dump( group_dir[i], ret_realpath( filter_file[i][j]), ret_realpath(fnames[j]));
-		main_md5( group_dir[i]);
+		main_md5( group_dir[i], dname1);
 	}
 
 	free( fnames);
@@ -137,11 +145,11 @@ void errUsage( void)
 }
 
 
-void dir_situation( void)
+void dir_situation( char* dname)
 {
 	char tmp;
 
-	printf("dir is exist, are you sure to dump into it? y/n\n");
+	printf("DIR %s is exist, are you sure to dump into it? y/n\n", dname);
 	
 	while( (tmp =getchar()) != '\n' ){
 
@@ -169,7 +177,7 @@ char** creat_blob( char** fnames, int fnum, char* dname)
 	}
 	/*append suffix*/
 	apen_dir_file( dname, fnames, fnum, outfile);
-	apen_suffix( outfile, "_blob.calls", fnum);	//strcat( outfile, ".blob.calls.txt"); ///< string cat can't handle the '.' at begin
+	apen_suffix( outfile, fnum, "_blob.calls");	//strcat( outfile, ".blob.calls.txt"); ///< string cat can't handle the '.' at begin
 
 	return outfile;
 }
@@ -204,6 +212,7 @@ void bin_dump( char* blob_dir,char* match_file, char* tfile)
 	lint call;
 
 	memset( callset, '\0', 1000);
+
 	do{
 		fgets( buf, 300, fp);
 		if( (p = strchr( buf, '\n')) != NULL)
@@ -215,10 +224,11 @@ void bin_dump( char* blob_dir,char* match_file, char* tfile)
 		sprintf( calls, "%lld", call);
 		strcat( callset, calls);
 		k++;
-		if( k % 6 == 5)
+		if( ( k % ( IN_CALLS_NUM + 1 )) == IN_CALLS_NUM )
 		{
 			dprintf("callset = %s\n", callset);
-			sprintf( cmd, "cd %s && apitrace dump --calls=%s --blobs %s  && cd -", blob_dir, callset, tfile);
+		  ///<FIXME: we should turn down the "stdout"
+			sprintf( cmd, "cd %s && apitrace dump --calls=%s --blobs %s > ../tmp && cd - > ../tmp && echo -n .", blob_dir, callset, tfile);
 			dprintf("cmd = %s\n", cmd);
 			system( cmd);
 			memset( buf, '\0', 1000);
@@ -227,6 +237,13 @@ void bin_dump( char* blob_dir,char* match_file, char* tfile)
 			strcat( callset, ",");
 		}
 	}while( !feof(fp) );
+
+	if( ( k % ( IN_CALLS_NUM + 1 )) != IN_CALLS_NUM ){
+		///<FIXME: we should turn down the "stdout"
+		sprintf( cmd, "cd %s && apitrace dump --calls=%s --blobs %s > ../tmp  && cd - > ../tmp && echo -n .", blob_dir, callset, tfile);
+		dprintf("cmd = %s\n", cmd);
+		system( cmd);
+	}
 
 	fclose( fp);
 }
@@ -259,11 +276,14 @@ void bin_dump( char* blob_dir,char* match_file, char* tfile)
 
 	fclose( fp);
 }*/
-void main_md5( char* group_dir)
+
+void main_md5( char* group_dir, char* out_dir)
 {
 	DIR* dir = opendir( group_dir);
 	struct dirent* entry;
 	
+	printf("\n\n******************************************\nI am keeping the uniqne bin via MD5 mapping\n****************************************\n");
+
 	char dst[200], cmd[500];
 	while( (entry = readdir( dir)) != NULL)
 	{
@@ -271,7 +291,7 @@ void main_md5( char* group_dir)
 		strcpy( dst, group_dir);
 		strcat( dst, "/");
 		strcat( dst, entry->d_name);
-		sprintf( cmd, "md5=$(md5sum %s|awk '{print $1}') && cp %s final/$md5", dst, dst);///<TODO: I create final/ by default, so it need to be auto
+		sprintf( cmd, "md5=$(md5sum %s|awk '{print $1}') && cp %s %s/$md5", dst, dst, out_dir);
 		dprintf("cmd = %s\n", cmd);
 		system(cmd);
 	}

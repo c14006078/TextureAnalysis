@@ -7,6 +7,7 @@
  * Parallel Parameter
  */
 #define PROCESS_NUM 4
+#define IN_CALLS_NUM 10
 
 /**
  * Max Length

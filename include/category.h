@@ -6,22 +6,30 @@
 #include "debug.h"
 #include "constant.h"
 
+/**
+ * @file this file is about 
+ *
+ *
+ */
 typedef struct encyclopedia{
-	int cate_num;
-	struct category* pcate[ MAX_CATE_NUM];
+	int cate_num;///< category number
+	struct category* pcate[ MAX_CATE_NUM];///< category arrary pointer
 }encyclopedia;
 
 typedef struct category{
-	char category[ MAX_NAME_LENGTH];
-	int gl_num;
+	char category[ MAX_NAME_LENGTH];///< category name
+	int gl_num;///< the nuber of glapi class
 	struct glapi *include;
 }category;
 
 typedef struct glapi{
-	char name[ MAX_NAME_LENGTH];
+	char name[ MAX_NAME_LENGTH];///< gl
 	struct glapi* next;
 } glapi;
 
+/**
+ * New the 
+ */
 encyclopedia* new_pedia( void);
 
 category* new_cateNode( char* name);

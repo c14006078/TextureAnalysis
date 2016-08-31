@@ -36,3 +36,5 @@ test-%: test/test-%.c $(OBJS)
 
 clean:
 	$(RM) $(EXEC) $(OBJS)
+	$(RM) -rf Analysis_TMP
+	$(RM) tmp tmp_cate

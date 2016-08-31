@@ -91,13 +91,7 @@ int main( int argc, char **argv)
 	end = get_time();
 	printf("All dump work is complete. It take %lf sec\n", diff_time( start, end));
 
-	/**
-	 *
-	 *	statistic
-	 *
-	 */
-	statistic( dump_file, fnum);
-
+	/* group.cfg */
 	encyclopedia* group = cfg_paser( "group.cfg");
 
 	char*** filter_file = creat_group( dump_file, fnum, group);
@@ -121,6 +115,44 @@ int main( int argc, char **argv)
 		group_dir[i] = ( char*) malloc( sizeof( char) * MAX_FILE_PATH);
 		strcpy( cate_dir[i], group->pcate[i]->category);
 	}
+
+	/* exclude.cfg */
+	encyclopedia* exclude = cfg_paser( "exclude.cfg");
+
+	char** pattern1 = ( char**) malloc( sizeof( char*) *exclude->cate_num);
+
+	for( int i = 0; i < exclude->cate_num; i++){
+		pattern1[i] = (char* ) malloc( sizeof( char) * MAX_PATTERN_LENGTH);
+		create_pattern( exclude ->pcate[i], pattern1[i]);
+	}
+
+	char* exc_patt = ( char*) malloc( sizeof( char) *2000);
+	memset( exc_patt, '\0', 1000);
+
+	for( int i = 0; i < group->cate_num; i++){
+		strcat( exc_patt, pattern[i]);
+		strcat( exc_patt, "\\|");
+	}
+
+	for( int i = 0; i < exclude->cate_num; i++){
+		strcat( exc_patt, pattern1[i]);
+		if( i != exclude->cate_num - 1) strcat( exc_patt, "\\|");
+	}
+
+	dprintf("Exclude Pattern = %s\n", exc_patt);
+
+	/**
+	 *
+	 *	statistic
+	 *
+	 */
+	statistic( dump_file, fnum);
+
+	printf("\n**********************\n  WARNING: Not Specify GL API\n*****************\n");
+
+	char exc_cmd[2200];
+	sprintf( exc_cmd, "cat tmp_cate | grep -v '%s'", exc_patt);
+	system( exc_cmd);
 
 	apen_dir_file( dname, cate_dir, group->cate_num, group_dir);
 

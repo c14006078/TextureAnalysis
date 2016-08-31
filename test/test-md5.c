@@ -24,11 +24,12 @@ int main( int argc, char** argv)
 	tmp[0] = '\0'; out[0] = '\0';
 	for( int i = 0; i < 16; i++){
 		sprintf( tmp, "%02x", md5[i]);
-		printf("md5[%d] = %s out = %s\n", i, tmp, out);
+		//printf("md5[%d] = %s out = %s\n", i, tmp, out);
 		strcat( out, tmp);
 	}
-	printf("%s => %s\n", fname, out);
+	//printf("%s => %s\n", fname, out);
 
+	printf("shell md5sum: \n");
 	char cmd[50] = "md5sum ";
 	strcat( cmd, fname);
 	system( cmd);
@@ -41,7 +42,7 @@ int main( int argc, char** argv)
 	stat( fname, &st);
 	size_t size = st.st_size;
 
-	printf("file size = %d\n", ( int) size);
+	//printf("file size = %d\n", ( int) size);
 
 	FILE* fp = fopen( fname, "rb");
 	unsigned char* ar = ( unsigned char*) malloc( size);

@@ -81,6 +81,7 @@ void statistic( char** file, int fnum)
 		strcat( buf, file[i]);
 		strcat( buf, " ");
 	}
+	printf("\n*****************************************\n Statistic the GL Calls distrubution \n****************************************\n");
 
 	char cmd[ 500];
 	sprintf( cmd, "cat %s | tr '(' ' ' | awk '{print $2}'| sort | uniq -c | sort -k 1", buf);

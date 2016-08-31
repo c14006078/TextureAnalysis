@@ -23,6 +23,14 @@ ifeq ($(strip $(DEBUG)),1)
 CFLAGS += -DDEBUG -g
 endif
 
+ifdef PROCESS_NUM
+CFLAGS += -DPROCESS_NUM=$(PROCESS_NUM)
+endif
+
+ifdef MAX_CALLS
+CFLAGS += -DIN_CALLS_NUM=$(MAX_CALLS)
+endif
+
 all: $(EXEC)
 
 main: src/main.c $(OBJS)

@@ -16,11 +16,11 @@ Apitrace for Linux, there are two opitions below:
 
  Compile this Project.
 
-    `make [PROCESS_NUM=4 MAX_CALLS=10 DEBUG=1]`
+    `make [PROCESS_NUM=4 MAX_CALLS=10 DEBUG=0]`
 
-  * PROCESS_NUM will decide the parallel parameter about process number.(default is 4)
-  * MAX_CALLS will determine the batch of instruction number.(default is 10)
-  * DEBUG will turn on the Debug option.
+  * PROCESS_NUM will decide the parallel parameter about process number.It should be as many as your CPU cores.(default is 4, min 1)
+  * MAX_CALLS will determine the batch of instruction number.(default is 10, min 1)
+  * DEBUG will turn on the Debug option if DEBUG=1.
 
 
 **Usage**
@@ -38,9 +38,8 @@ Apitrace for Linux, there are two opitions below:
 
 * Third, edit configuration file. We can use these to make a rule for selecting needed calls.
 
-  * group.cf assign group and member.
-  * exclude.cfg exclude specify the GL API.
-  * FORMAT: Group name will be at the first. Then we use [tab] for our member. It is pretty easy and we already supply the basic example at this Project.
+  * `include.cfg` the api we want to analysis.
+  * `exclude.cfg` the api we don't want to analysis.
 
 * Forth, trace files analysis and dump the specify binary
  

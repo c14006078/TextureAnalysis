@@ -1,3 +1,6 @@
+#ifndef APITRACE_H
+#define APITRACE_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -49,3 +52,5 @@ void statistic( char** file, int fnum);
  * @param filter_files	"destination" file path arrary
  */
 void main_filter( char** fnames, int fnum, char* pattern, char** filter_files);
+
+#endif ///< #ifndef APITRACE_H

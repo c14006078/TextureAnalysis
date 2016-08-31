@@ -1,3 +1,6 @@
+#ifndef MD5_H
+#define MD5_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <openssl/md5.h>
@@ -25,3 +28,5 @@ char* md5sum( char* file);
 *	@return md5 hash value with 128-bit
 */
 char* md5sum1( unsigned char *data, size_t length);
+
+#endif ///< #ifndef MD5_H

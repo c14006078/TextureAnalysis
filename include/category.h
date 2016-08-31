@@ -1,3 +1,6 @@
+#ifndef CATEGORY_H
+#define CATEGORY_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -8,7 +11,6 @@
 
 /**
  * @file this file is about 
- *
  *
  */
 typedef struct encyclopedia{
@@ -43,3 +45,5 @@ encyclopedia* cfg_paser( char* file);
 void show_pedia( encyclopedia* book);
 
 void create_pattern( category* cate, char* pattern);
+
+#endif ///< #ifndef CATEGORY_H

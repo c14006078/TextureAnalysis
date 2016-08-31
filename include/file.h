@@ -1,3 +1,6 @@
+#ifndef FILE_H
+#define FILE_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
@@ -67,3 +70,5 @@ void apen_suffix( char** in, int n, char* suffix);
 char* ret_cwd( void);
 
 char* ret_realpath( char* path);
+
+#endif///< #ifndef FILE_H

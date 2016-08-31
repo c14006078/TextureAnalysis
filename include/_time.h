@@ -1,3 +1,6 @@
+#ifndef _TIME_H
+#define _TIME_H
+
 #include <time.h>
 
 /**
@@ -16,3 +19,5 @@ time_t get_time( void);
  * @return time the difference in time
  */
 double diff_time( time_t start, time_t end);
+
+#endif ///< #ifndef _TIME_H

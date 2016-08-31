@@ -1,3 +1,6 @@
+#ifndef CONTEXT_H
+#define CONTEXT_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -52,3 +55,5 @@ instr* init_instr( tfile* tf, char* name, lint call);
 folder* load_context( char** fnames, int fnum);
 
 void parse_tfile( FILE* f, tfile* tf);
+
+#endif ///< #ifndef CONTEXT_H

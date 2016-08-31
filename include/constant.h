@@ -3,11 +3,19 @@
  *				declare the process number
  */
 
+#ifndef DEBUG_H
+#define DEBUG_H
 /**
  * Parallel Parameter
  */
-#define PROCESS_NUM 4
-#define IN_CALLS_NUM 10
+
+#ifndef PROCESS_NUM
+	#define PROCESS_NUM 4
+#endif
+
+#ifndef IN_CALLS_NUM
+	#define IN_CALLS_NUM 10
+#endif
 
 /**
  * Max Length
@@ -22,3 +30,5 @@
  */
 #define MAX_TRACE_NUM 50
 #define MAX_CATE_NUM 10
+
+#endif

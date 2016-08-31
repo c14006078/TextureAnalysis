@@ -91,8 +91,8 @@ int main( int argc, char **argv)
 	end = get_time();
 	printf("All dump work is complete. It take %lf sec\n", diff_time( start, end));
 
-	/* group.cfg */
-	encyclopedia* group = cfg_paser( "group.cfg");
+	/* group.cfg -> include.cfg */
+	encyclopedia* group = cfg_paser( "include.cfg");
 
 	char*** filter_file = creat_group( dump_file, fnum, group);
 
